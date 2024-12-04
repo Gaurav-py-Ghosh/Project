@@ -1,12 +1,14 @@
   import 'package:flutter/material.dart';
   import 'package:flutter_animate/flutter_animate.dart';
   import 'package:google_fonts/google_fonts.dart';
-  import 'package:flutter_svg/flutter_svg.dart';
-
+  // import 'package:flutter_svg/flutter_svg.dart';
+  import 'package:http/http.dart' as http;
+  import 'package:html/parser.dart' as parser;
   import '../widgets/activity_progress_card.dart';
   import '../widgets/heart_rate_card.dart';
   import '../widgets/sleep_quality_card.dart';
   import 'package:fl_chart/fl_chart.dart';
+  import 'dart:convert';
 
   void main() {
     runApp(const MyApp());
@@ -140,7 +142,7 @@
         body: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(top:16,left:16,right:16,bottom:100),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const StepCountCard()
@@ -416,7 +418,7 @@
           slivers: [
 
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(top:16,left:16,right:16,bottom:100),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const LastNightSleepCard()
@@ -507,7 +509,7 @@
                   ),
                   _buildSleepMetric(
                     context,
-                    icon: Icons.call,
+                    icon: Icons.sunny,
                     label: 'Wake up',
                     value: '6:15 AM',
                   ),
@@ -721,6 +723,111 @@
     }
   }
 
+
+
+
+  class PatientHistoryScreen extends StatelessWidget {
+    const PatientHistoryScreen({super.key});
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Patient History'),
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.only(top:16.0,left:16,right:16,bottom:100),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildSectionTitle(context, 'Past Medications'),
+                    _buildHistoryItem(context, 'Medication A - 10mg - 2022-01-01'),
+                    _buildHistoryItem(context, 'Medication B - 20mg - 2022-02-15'),
+                    const SizedBox(height: 16),
+                    _buildSectionTitle(context, 'Accidents'),
+                    _buildHistoryItem(context, 'Fall - 2021-12-10'),
+                    _buildHistoryItem(context, 'Car Accident - 2022-03-05'),
+                    const SizedBox(height: 16),
+                    _buildSectionTitle(context, 'Allergies'),
+                    _buildHistoryItem(context, 'Peanuts'),
+                    _buildHistoryItem(context, 'Penicillin'),
+                    const SizedBox(height: 16),
+                    _buildSectionTitle(context, 'MRIs and Scans'),
+                    _buildScanItem(context, 'MRI - Brain - 2023-01-20', 'assets/images/mri_brain.jpg'),
+                    _buildScanItem(context, 'X-Ray - Chest - 2023-02-15', 'assets/images/xray_chest.jpg'),
+                  ]),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget _buildSectionTitle(BuildContext context, String title) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold) ??
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 20), // Fallback style
+        ),
+      );
+    }
+
+    Widget _buildHistoryItem(BuildContext context, String item) {
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(item, style: Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+        ),
+      );
+    }
+
+    Widget _buildScanItem(BuildContext context, String title, String imagePath) {
+      return GestureDetector(
+        onTap: () => _showImageDialog(context, imagePath),
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+                const SizedBox(height: 8),
+                Text('Tap to view image', style: Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    void _showImageDialog(BuildContext context, String imagePath) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Image.asset(imagePath, fit: BoxFit.cover),
+            actions: [
+              TextButton(
+                child: const Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
   class HomeScreen extends StatefulWidget {
     const HomeScreen({super.key});
 
@@ -737,6 +844,8 @@
       const ActivityScreen(),
       const SleepScreen(),
       const DiseasePredictionScreen(),
+      const PatientHistoryScreen(),
+
     ];
 
     @override
@@ -791,6 +900,11 @@
                       selectedIcon: Icon(Icons.medical_services),
                       label: 'Health',
                     ),
+                    NavigationDestination(
+                      icon: Icon(Icons.history_outlined),
+                      selectedIcon: Icon(Icons.history),
+                      label: 'History',
+                    ),
                   ],
                 ),
               ),
@@ -815,7 +929,7 @@
           child: CustomScrollView(
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(top:16,left:16,right:16,bottom:100),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     const UserHeader(),
@@ -879,7 +993,7 @@
                 ),
               ),
               Text(
-                'John Doe',
+                'Akshit',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -900,9 +1014,7 @@
 
   class _DiseasePredictionScreenState extends State<DiseasePredictionScreen> {
     final List<String> _selectedSymptoms = [];
-    String _predictionResult = "";
-    String _severity = "";
-    Color _severityColor = Colors.grey;
+    Widget? _resultCard;
     bool _isAnalyzing = false;
 
     final List<String> _commonSymptoms = [
@@ -923,44 +1035,14 @@
     void _predictDisease() {
       setState(() => _isAnalyzing = true);
 
-      Future.delayed(const Duration(seconds: 1), () {
-        final symptoms = _selectedSymptoms.map((s) => s.toLowerCase()).toList();
+      // Reset result card while analyzing
+      setState(() => _resultCard = null);
 
-        if (symptoms.contains('fever') &&
-            symptoms.contains('cough') &&
-            symptoms.contains('shortness of breath')) {
-          _updatePrediction(
-            "Possible Condition: Respiratory Infection",
-            "Moderate to Severe",
-            Colors.red,
-          );
-        } else if (symptoms.contains('fever') && symptoms.contains('cough')) {
-          _updatePrediction(
-            "Possible Condition: Influenza (Flu)",
-            "Moderate",
-            Colors.orange,
-          );
-        } else if (symptoms.contains('headache') && symptoms.contains('nausea')) {
-          _updatePrediction(
-            "Possible Condition: Migraine",
-            "Mild to Moderate",
-            Colors.yellow[700]!,
-          );
-        } else if (symptoms.contains('sore throat') &&
-            symptoms.contains('runny nose')) {
-          _updatePrediction(
-            "Possible Condition: Common Cold",
-            "Mild",
-            Colors.green,
-          );
-        } else if (symptoms.isNotEmpty) {
-          _updatePrediction(
-            "Multiple symptoms detected. Please consult a healthcare provider for accurate diagnosis.",
-            "Undetermined",
-            Colors.grey,
-          );
+      Future.delayed(const Duration(seconds: 1), () {
+        if (_selectedSymptoms.isNotEmpty) {
+          _fetchDiseaseData(_selectedSymptoms);
         } else {
-          _updatePrediction(
+          _showResult(
             "Please select your symptoms.",
             "",
             Colors.grey,
@@ -969,11 +1051,77 @@
       });
     }
 
-    void _updatePrediction(String prediction, String severity, Color color) {
+    Future<void> _fetchDiseaseData(List<String> symptoms) async {
+      try {
+        final symptomQuery = Uri.encodeComponent(symptoms.join(' OR '));
+        final url = 'https://api.fda.gov/drug/event.json?search=symptom:$symptomQuery&limit=5';
+
+        final response = await http.get(Uri.parse(url));
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final diseases = _parseDiseaseData(data);
+
+          if (diseases.isNotEmpty) {
+            _showResult(
+              "Possible Conditions: ${diseases.join(', ')}",
+              "Consult a healthcare provider",
+              Colors.blue,
+            );
+          } else {
+            _showResult(
+              "No conditions found for the selected symptoms.",
+              "Undetermined",
+              Colors.grey,
+            );
+          }
+        } else {
+          _showResult(
+            "Failed to fetch data. Please try again later.",
+            "",
+            Colors.grey,
+          );
+        }
+      } catch (e) {
+        _showResult(
+          "Unable to analyze symptoms at this time. Please try again later.",
+          "",
+          Colors.grey,
+        );
+      }
+    }
+
+    List<String> _parseDiseaseData(Map<String, dynamic> data) {
+      final Set<String> diseases = {};
+
+      try {
+        if (data['results'] != null) {
+          for (var event in data['results']) {
+            if (event['patient'] != null &&
+                event['patient']['reaction'] != null) {
+              for (var reaction in event['patient']['reaction']) {
+                final reactionName = reaction['reactionmeddrapt'];
+                if (reactionName != null && reactionName is String) {
+                  diseases.add(reactionName);
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        print('Error parsing disease data: $e');
+      }
+
+      return diseases.take(2).toList();
+    }
+
+    void _showResult(String prediction, String severity, Color color) {
       setState(() {
-        _predictionResult = prediction;
-        _severity = severity;
-        _severityColor = color;
+        _resultCard = ResultCard(
+          predictionResult: prediction,
+          severity: severity,
+          severityColor: color,
+        );
         _isAnalyzing = false;
       });
     }
@@ -989,7 +1137,7 @@
           child: CustomScrollView(
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16.0),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     Card(
@@ -1006,20 +1154,16 @@
                             const SizedBox(height: 8),
                             Text(
                               'Choose all symptoms that apply:',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: Colors.grey),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                             ),
                             const SizedBox(height: 16),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
                               children: _commonSymptoms.map((symptom) {
-                                final isSelected = _selectedSymptoms.contains(symptom);
                                 return FilterChip(
                                   label: Text(symptom),
-                                  selected: isSelected,
+                                  selected: _selectedSymptoms.contains(symptom),
                                   onSelected: (selected) {
                                     setState(() {
                                       if (selected) {
@@ -1029,69 +1173,26 @@
                                       }
                                     });
                                   },
-                                  selectedColor: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.2),
-                                  checkmarkColor: Theme.of(context).primaryColor,
-                                ).animate().scale(
-                                  duration: const Duration(milliseconds: 200),
                                 );
                               }).toList(),
                             ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isAnalyzing ? null : _predictDisease,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(_isAnalyzing ? 'Analyzing...' : 'Predict Disease'),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            if (_resultCard != null) _resultCard!,
                           ],
                         ),
                       ),
-                    ).animate().fadeIn().slideY(),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: FilledButton.icon(
-                        onPressed: _selectedSymptoms.isNotEmpty && !_isAnalyzing
-                            ? _predictDisease
-                            : null,
-                        icon: _isAnalyzing
-                            ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                            : const Icon(Icons.search_rounded),
-                        label: const Text('Analyze Symptoms'),
-                      ),
-                    ).animate().fadeIn(delay: 200.ms).scale(),
-                    if (_predictionResult.isNotEmpty) ...[
-                      const SizedBox(height: 20),
-                      Card(
-                        color: _severityColor.withOpacity(0.1),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Prediction Result:',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _predictionResult,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Severity: $_severity',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(color: _severityColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ).animate().fadeIn(delay: 400.ms).slideY(),
-                    ],
+                    ),
                   ]),
                 ),
               ),
@@ -1102,6 +1203,8 @@
     }
   }
 
+  // ... (previous code remains the same until ResultCard class)
+
   class ResultCard extends StatelessWidget {
     final String predictionResult;
     final String severity;
@@ -1110,7 +1213,7 @@
     const ResultCard({
       super.key,
       required this.predictionResult,
-      required this.severity,
+      this.severity = '', // Provide default empty string
       required this.severityColor,
     });
 
@@ -1139,35 +1242,35 @@
                 predictionResult,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
-              if (severity.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      'Severity: ',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: severityColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        severity,
-                        style: TextStyle(
-                          color: severityColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              // if (severity.isNotEmpty) ...[
+              //   const SizedBox(height: 8),
+              //   Row(
+              //     children: [
+              //       Text(
+              //         'Severity: ',
+              //         style: Theme.of(context)
+              //             .textTheme
+              //             .bodyMedium
+              //             ?.copyWith(fontWeight: FontWeight.bold),
+              //       ),
+              //       Container(
+              //         padding:
+              //         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //         decoration: BoxDecoration(
+              //           color: severityColor.withOpacity(0.2),
+              //           borderRadius: BorderRadius.circular(12),
+              //         ),
+              //         child: Text(
+              //           severity,
+              //           style: TextStyle(
+              //             color: severityColor,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ],
               const SizedBox(height: 12),
               const DisclaimerText(),
             ],
@@ -1176,6 +1279,8 @@
       );
     }
   }
+
+  // ... (rest of the code remains the same)
 
   class DisclaimerText extends StatelessWidget {
     const DisclaimerText({super.key});
@@ -1195,7 +1300,7 @@
               size: 16,
               color: Theme.of(context).colorScheme.error,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 'This is not a medical diagnosis. Please consult a healthcare provider for proper medical advice.',
