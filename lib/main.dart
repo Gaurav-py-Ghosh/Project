@@ -16,7 +16,7 @@ class HealthTrackingApp extends StatelessWidget {
       title: 'hi',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Color(0xffe6d6ff),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           elevation: 0,

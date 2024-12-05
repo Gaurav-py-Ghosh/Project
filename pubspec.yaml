@@ -51,6 +51,8 @@ dependencies:
 
     # Charts and Visualizations
   fl_chart: ^0.66.2
+  syncfusion_flutter_gauges: ^27.2.5
+
 
     # Date and Time
 intl: ^0.19.0

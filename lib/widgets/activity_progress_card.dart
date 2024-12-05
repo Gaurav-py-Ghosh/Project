@@ -1,68 +1,110 @@
-// lib/widgets/activity_progress_card.dart
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class ActivityProgressCard extends StatelessWidget {
-  const ActivityProgressCard({super.key});
+  final double progressValue;
+
+  const ActivityProgressCard({super.key, this.progressValue = 65});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xff40097c),
+            Color(0xff7e4db6),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Daily Activity Progress',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      child: Card(
+        color: Colors.transparent, // Transparent to show the gradient
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Daily Activity Progress',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              height: 150,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    height: 150,
-                    width: 150,
-                    child: CircularProgressIndicator(
-                      value: 0.65,
-                      strokeWidth: 12,
-                      backgroundColor:  Color(0xA5329D9C),
-
-                valueColor: AlwaysStoppedAnimation<Color>(
-                           Color(0xFF329D9C),
-
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 150,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: SfRadialGauge(
+                        axes: <RadialAxis>[
+                          RadialAxis(
+                            showLabels: false,
+                            showTicks: false,
+                            minimum: 0,
+                            maximum: 100,
+                            axisLineStyle: const AxisLineStyle(
+                              thickness: 0.15,
+                              thicknessUnit: GaugeSizeUnit.factor,
+                            ),
+                            pointers: <GaugePointer>[
+                              RangePointer(
+                                value: progressValue,
+                                width: 0.2,
+                                sizeUnit: GaugeSizeUnit.factor,
+                                cornerStyle: CornerStyle.bothCurve,
+                                gradient: const SweepGradient(
+                                  colors: <Color>[
+                                    Color(0xFFB97CFF),
+                                    Color(0xffd2acff)
+                                  ],
+                                  stops: <double>[0.25, 0.75],
+                                ),
+                              ),
+                              MarkerPointer(
+                                value: progressValue,
+                                markerType: MarkerType.circle,
+                                color: const Color(0xffb97cff),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '65%',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${progressValue.toStringAsFixed(0)}%',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Completed',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ],
+                        const Text(
+                          'Completed',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

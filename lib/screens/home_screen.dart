@@ -9,6 +9,7 @@
   import '../widgets/sleep_quality_card.dart';
   import 'package:fl_chart/fl_chart.dart';
   import 'dart:convert';
+  import 'package:syncfusion_flutter_gauges/gauges.dart';
 
   void main() {
     runApp(const MyApp());
@@ -924,6 +925,7 @@
         appBar: AppBar(
           title: const Text('Home'),
           backgroundColor: Theme.of(context).primaryColor,
+
         ),
         body: SafeArea(
           child: CustomScrollView(
@@ -1053,6 +1055,7 @@
 
     Future<void> _fetchDiseaseData(List<String> symptoms) async {
       try {
+        //CONNECTION TO API
         final symptomQuery = Uri.encodeComponent(symptoms.join(' OR '));
         final url = 'https://api.fda.gov/drug/event.json?search=symptom:$symptomQuery&limit=5';
 
@@ -1181,12 +1184,23 @@
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: _isAnalyzing ? null : _predictDisease,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  child: Text(_isAnalyzing ? 'Analyzing...' : 'Predict Disease'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _isAnalyzing ? Colors.deepPurple.shade300 : Colors.deepPurple.shade400, // Button background color
+                                  foregroundColor: Colors.white, // Text color
+                                  disabledBackgroundColor: Colors.deepPurple.shade300,
+                                  disabledForegroundColor: Colors.white,// Disabled background color
+                                  padding: const EdgeInsets.symmetric(vertical: 12), // Padding inside the button
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                                  ),
+                                ),
+                                child: Text(
+                                  _isAnalyzing ? 'Analyzing...' : 'Predict Disease',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
+
                             const SizedBox(height: 20),
                             if (_resultCard != null) _resultCard!,
                           ],
