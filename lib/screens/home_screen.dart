@@ -993,7 +993,7 @@
                 ),
               ),
               Text(
-                'Akshit',
+                'Sejal Gupta',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
